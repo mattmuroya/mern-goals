@@ -1,9 +1,12 @@
+const Goal = require('../models/goal');
+
 // @desc    Gets a list of all goals
 // @route   GET /api/goals/
 // @access  Private
 module.exports.getGoals = async (req, res) => {
   try {
-    res.status(200).json({ message: 'get goals' });
+    const goals = await Goal.find();
+    res.status(200).json(goals);
   } catch (error) {
     next(error);
   }
@@ -18,7 +21,10 @@ module.exports.setGoal = async (req, res, next) => {
       res.status(400);
       throw new Error('please add goal text');
     }
-    res.status(200).json({ message: 'set goal' });
+    const goal = await Goal.create({
+      text: req.body.text,
+    });
+    res.status(201).json(goal);
   } catch (error) {
     next(error);
   }
@@ -29,7 +35,15 @@ module.exports.setGoal = async (req, res, next) => {
 // @access  Private
 module.exports.updateGoal = async (req, res) => {
   try {
-    res.status(200).json({ message: `update goal ${req.params.id}` });
+    const goal = await Goal.findById(req.params.id);
+    if (!goal) {
+      res.status(404);
+      throw new Error('goal not found');
+    }
+    const updatedGoal = await Goal.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+    res.status(200).json(updatedGoal);
   } catch (error) {
     next(error);
   }
@@ -40,7 +54,13 @@ module.exports.updateGoal = async (req, res) => {
 // @access  Private
 module.exports.deleteGoal = async (req, res) => {
   try {
-    res.status(200).json({ message: `delete goal ${req.params.id}` });
+    const goal = await Goal.findById(req.params.id);
+    if (!goal) {
+      res.status(404);
+      throw new Error('goal not found');
+    }
+    await goal.remove();
+    res.status(200).json({ id: req.params.id });
   } catch (error) {
     next(error);
   }

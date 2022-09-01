@@ -1,8 +1,8 @@
 const express = require('express');
 const app = express();
 
-// app.use('/', (req, res) => {
-//   res.send('hello world');
-// });
+const goalRouter = require('./routes/goalRouter');
+
+app.use('/api/goals', goalRouter);
 
 module.exports = app;

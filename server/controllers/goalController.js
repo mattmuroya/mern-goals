@@ -17,14 +17,20 @@ module.exports.getGoals = async (req, res) => {
 // @access  Private
 module.exports.setGoal = async (req, res, next) => {
   try {
-    if (!req.body.text) {
+    const { text } = req.body;
+    if (!text) {
       res.status(400);
-      throw new Error('please add goal text');
+      throw new Error('Please add goal text');
     }
     const goal = await Goal.create({
-      text: req.body.text,
+      text,
     });
-    res.status(201).json(goal);
+    if (goal) {
+      res.status(201).json(goal);
+    } else {
+      res.status(400);
+      throw new Error('Invalid goal data');
+    }
   } catch (error) {
     next(error);
   }

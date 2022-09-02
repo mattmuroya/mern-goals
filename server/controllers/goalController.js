@@ -1,7 +1,7 @@
 const Goal = require('../models/goal');
 
 // @desc    Gets a list of all goals
-// @route   GET /api/goals/
+// @route   GET /api/goals
 // @access  Private
 module.exports.getGoals = async (req, res) => {
   try {
@@ -13,7 +13,7 @@ module.exports.getGoals = async (req, res) => {
 };
 
 // @desc    Creates a new goal
-// @route   POST /api/goals/
+// @route   POST /api/goals
 // @access  Private
 module.exports.setGoal = async (req, res, next) => {
   try {

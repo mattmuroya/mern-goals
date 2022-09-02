@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const { MONGODB_URI } = require('./utils/config');
 
 const goalRouter = require('./routes/goalRouter');
+const userRouter = require('./routes/userRouter');
 const { errorHandler } = require('./middleware/errorHandler');
 
 // DATABASE CONNECTION
@@ -23,6 +24,7 @@ app.use(express.urlencoded({ extended: false }));
 
 // REQUEST ROUTERS
 app.use('/api/goals', goalRouter);
+app.use('/api/users', userRouter);
 
 // ERROR HANDLER
 app.use(errorHandler);

@@ -1,11 +1,12 @@
 const Goal = require('../models/goal');
+const User = require('../models/user');
 
 // @desc    Gets a list of all goals
 // @route   GET /api/goals
 // @access  Private
-module.exports.getGoals = async (req, res) => {
+module.exports.getGoals = async (req, res, next) => {
   try {
-    const goals = await Goal.find();
+    const goals = await Goal.find({ user: req.user.id });
     res.status(200).json(goals);
   } catch (error) {
     next(error);
@@ -24,6 +25,7 @@ module.exports.setGoal = async (req, res, next) => {
     }
     const goal = await Goal.create({
       text,
+      user: req.user.id,
     });
     if (goal) {
       res.status(201).json(goal);
@@ -39,12 +41,16 @@ module.exports.setGoal = async (req, res, next) => {
 // @desc    Updates a specific goal by id
 // @route   PUT /api/goals/:id
 // @access  Private
-module.exports.updateGoal = async (req, res) => {
+module.exports.updateGoal = async (req, res, next) => {
   try {
     const goal = await Goal.findById(req.params.id);
     if (!goal) {
       res.status(404);
       throw new Error('goal not found');
+    }
+    if (req.user.id !== goal.user.toString()) {
+      res.status(401);
+      throw new Error('Not authorized');
     }
     const updatedGoal = await Goal.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
@@ -58,12 +64,16 @@ module.exports.updateGoal = async (req, res) => {
 // @desc    Deletes a specific goal by id
 // @route   DELETE /api/goals/:id
 // @access  Private
-module.exports.deleteGoal = async (req, res) => {
+module.exports.deleteGoal = async (req, res, next) => {
   try {
     const goal = await Goal.findById(req.params.id);
     if (!goal) {
       res.status(404);
       throw new Error('goal not found');
+    }
+    if (req.user.id !== goal.user.toString()) {
+      res.status(401);
+      throw new Error('Not authorized');
     }
     await goal.remove();
     res.status(200).json({ id: req.params.id });

@@ -28,8 +28,8 @@ module.exports.registerUser = async (req, res, next) => {
       res.status(201).json({
         name: user.name,
         email: user.email,
-        _id: user._id,
-        token: generateToken(user._id),
+        id: user.id,
+        token: generateToken(user.id),
       });
     } else {
       res.status(400);
@@ -53,8 +53,8 @@ module.exports.loginUser = async (req, res, next) => {
       res.status(201).json({
         name: user.name,
         email: user.email,
-        _id: user._id,
-        token: generateToken(user._id),
+        id: user.id,
+        token: generateToken(user.id),
       });
     } else {
       res.status(400);
@@ -67,10 +67,11 @@ module.exports.loginUser = async (req, res, next) => {
 
 // @desc    Gets current authenticated user's data
 // @route   GET /api/users/current
-// @access  Public
+// @access  Private
 module.exports.getCurrentUser = async (req, res, next) => {
   try {
-    res.status(200).json({ message: 'Current user' });
+    const { id, name, email } = req.user;
+    res.status(200).json({ id, name, email });
   } catch (error) {
     next(error);
   }
